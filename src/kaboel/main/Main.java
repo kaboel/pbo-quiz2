@@ -42,33 +42,18 @@ public class Main extends javax.swing.JFrame {
     }
     
     // update qty function 
-    private void updateQty(String name, int qty) {
-        int add = 1;
+    private void updateQty(String name, int add) {
         ArrayList<String> item = new ArrayList<>();
         for (int i = 0; i < tbModel.getRowCount(); i++){
             item.add(tbModel.getValueAt(i, 0).toString());
         }
         for(int i = 0; i < item.size(); i++) {
             if(item.get(i).equals(name)) {
+                int qty = new Integer(tbModel.getValueAt(i, 2).toString());
                 tbModel.setValueAt(qty+add, i, 2);  
             } 
         }
     } 
-    
-    // get qty where item name equals to name parameter
-    private int getQtyAt(String name) {
-        int qty = 0;
-        ArrayList<String> item = new ArrayList<>();
-        for (int i = 0; i < tbModel.getRowCount(); i++){
-            item.add(tbModel.getValueAt(i, 0).toString());
-        }
-        for(int i = 0; i < item.size(); i++) {
-            if(item.get(i).equals(name)) {
-                qty = new Integer(tbModel.getValueAt(i, 2).toString());  
-            } 
-        }
-        return qty;
-    }
     
     // check if the item selected is a duplicate of a previously selected item
     private boolean isDuplicate(String name) {
@@ -268,8 +253,7 @@ public class Main extends javax.swing.JFrame {
         int qty = new Integer(this.txtJml.getText()); // get txtJml text as an Integer then;
         Item item = new Item(name, qty); // instantiate Item class then; 
         if(isDuplicate(name)) { // check if an item is a duplicate;
-            int add = getQtyAt(name); // if so, add only the qty cell with the new inputed qty
-            updateQty(name, add);     //
+            updateQty(name, qty); // if so, add only the qty cell with the new inputed qty
         } else {
             Object[] obj = {        // if not add new item 
                 item.getName(),     //
