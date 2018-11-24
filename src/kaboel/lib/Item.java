@@ -8,12 +8,17 @@ package kaboel.lib;
 
 public class Item {
     private final String name;
-    private final float price;
+    private float price;
     private int qty;
     
-    public Item(String name, float price) {
+    public Item(String name, int qty) {
         this.name = name;
-        this.price = price;
+        this.qty = qty;
+        switch(name) {
+            case "Kopi" : this.price = 10000; break;
+            case "Susu" : this.price = 20000; break;
+            case "Gula" : this.price = 30000; break;
+        }
     }
     
     public String getName() {
@@ -21,6 +26,10 @@ public class Item {
     }
 
     public float getPrice() {
+        return this.price;
+    }
+    
+    public float getTotal() {
         return this.price * this.qty;
     }
     
