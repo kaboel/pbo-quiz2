@@ -105,7 +105,11 @@
     <Component class="javax.swing.JComboBox" name="comboItems">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="0"/>
+          <StringArray count="3">
+            <StringItem index="0" value="Gula"/>
+            <StringItem index="1" value="Kopi"/>
+            <StringItem index="2" value="Susu"/>
+          </StringArray>
         </Property>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
@@ -136,6 +140,9 @@
         <Property name="text" type="java.lang.String" value="Add"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddActionPerformed"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
@@ -147,7 +154,7 @@
         <Component class="javax.swing.JTable" name="tblListItems">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new Cart()" type="code"/>
+              <Connection code="this.cart" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -173,6 +180,9 @@
         <Property name="text" type="java.lang.String" value="Remove"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRmvActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

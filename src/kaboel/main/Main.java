@@ -4,15 +4,46 @@
  */
 package kaboel.main;
 
+import java.util.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import kaboel.lib.*;
 
 public class Main extends javax.swing.JFrame {
-
+    private int id = 0;
+    private DefaultTableModel cart;
+    private ArrayList<Item> items = new ArrayList<Item>();
+    private ArrayList<Transact> Trx = new ArrayList<Transact>();
 
     public Main() {
+        Cart cart = new Cart();
+        this.cart = new DefaultTableModel(cart.getColumnName(), 0);
+        
         initComponents();
     }
-
+    
+    private int incId() {
+        this.id += 1;
+        return this.id;
+    }
+    
+    private int decId() {
+        this.id -= 1;
+        return this.id;
+    }
+    
+    private boolean isEmpty() {
+        return this.tblListItems.getModel().getRowCount()<=0;
+    }
+    
+    private void cartCheck() {
+        if(isEmpty()) {
+            this.btnSave.setEnabled(false);
+        } else {
+            this.btnSave.setEnabled(true);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -38,6 +69,7 @@ public class Main extends javax.swing.JFrame {
 
         txtCode.setEnabled(false);
 
+        comboItems.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Gula", "Kopi", "Susu" }));
         comboItems.setEnabled(false);
 
         jLabel1.setText("Code");
@@ -53,8 +85,13 @@ public class Main extends javax.swing.JFrame {
 
         btnAdd.setText("Add");
         btnAdd.setEnabled(false);
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
-        tblListItems.setModel(new Cart());
+        tblListItems.setModel(this.cart);
         jScrollPane1.setViewportView(tblListItems);
 
         btnSave.setText("Save");
@@ -70,6 +107,11 @@ public class Main extends javax.swing.JFrame {
 
         btnRmv.setText("Remove");
         btnRmv.setEnabled(false);
+        btnRmv.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRmvActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -131,14 +173,27 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+        this.txtJml.setText("1");
         this.btnNew.setEnabled(false);
         this.btnCncl.setEnabled(true);
         this.btnAdd.setEnabled(true);
         this.txtJml.setEnabled(true);
         this.comboItems.setEnabled(true);
+        
+        incId();
+        Transact t = new Transact(this.id);
+        this.txtCode.setText(t.getCode());
+        try {
+            Trx.add(t);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnCnclActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCnclActionPerformed
+        this.txtJml.setText("");
+        this.txtCode.setText("");
         this.btnNew.setEnabled(true);
         this.btnSave.setEnabled(false);
         this.btnCncl.setEnabled(false);
@@ -146,7 +201,31 @@ public class Main extends javax.swing.JFrame {
         this.btnRmv.setEnabled(false);
         this.txtJml.setEnabled(false);
         this.comboItems.setEnabled(false);
+        try {
+            decId();
+            this.Trx.remove(this.Trx.size() - 1);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }//GEN-LAST:event_btnCnclActionPerformed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append(this.Trx.size());
+            JOptionPane.showMessageDialog(this, sb);
+        } catch (Exception e) {
+        
+        }
+        
+        this.cartCheck();
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnRmvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRmvActionPerformed
+        
+        
+        this.cartCheck();
+    }//GEN-LAST:event_btnRmvActionPerformed
 
     /**
      * @param args the command line arguments
