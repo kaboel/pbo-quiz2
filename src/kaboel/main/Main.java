@@ -4,34 +4,80 @@
  */
 package kaboel.main;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import kaboel.lib.*;
 
 public class Main extends javax.swing.JFrame {
     private int id = 0;
-    private DefaultTableModel cart;
-    private ArrayList<Item> items = new ArrayList<Item>();
-    private ArrayList<Transact> Trx = new ArrayList<Transact>();
+    private String code;
+    private DefaultTableModel tbModel;
+    private ArrayList<Item> cart = new ArrayList<>();
 
     public Main() {
-        Cart cart = new Cart();
-        this.cart = new DefaultTableModel(cart.getColumnName(), 0);
+        TrxTableModel model = new TrxTableModel();
+        this.tbModel = new DefaultTableModel(model.getColumnName(), 0);
         
         initComponents();
     }
     
-    private int incId() {
-        this.id += 1;
-        return this.id;
+    private String setCode() {
+        this.incId();
+        String dt = new SimpleDateFormat("yyMMdd").format(new Date());
+        this.code = String.format(dt+"%02d", this.id);
+        return code;
     }
     
-    private int decId() {
-        this.id -= 1;
-        return this.id;
+    private void incId() {
+        this.id += 1;
     }
+    
+    private void decId() {
+        this.id -= 1;
+    }
+    
+    private void updateQty(String name, int qty) {
+        int add = 1;
+        ArrayList<String> item = new ArrayList<>();
+        for (int i = 0; i < tbModel.getRowCount(); i++){
+            item.add(tbModel.getValueAt(i, 0).toString());
+        }
+        for(int i = 0; i < item.size(); i++) {
+            if(item.get(i).equals(name)) {
+                tbModel.setValueAt(qty+add, i, 2);  
+            } 
+        }
+    } 
+    
+    private int getQtyAt(String name) {
+        int qty = 0;
+        ArrayList<String> item = new ArrayList<>();
+        for (int i = 0; i < tbModel.getRowCount(); i++){
+            item.add(tbModel.getValueAt(i, 0).toString());
+        }
+        for(int i = 0; i < item.size(); i++) {
+            if(item.get(i).equals(name)) {
+                qty = new Integer(tbModel.getValueAt(i, 2).toString());  
+            } 
+        }
+        return qty;
+    }
+    
+    private boolean isDuplicate(String name) {
+        boolean result = false;
+        ArrayList<String> item = new ArrayList<>();
+        for (int i = 0; i < tbModel.getRowCount(); i++){
+            item.add(tbModel.getValueAt(i, 0).toString());
+        }
+        for(String i : item) {
+            if(i.equals(name)) {
+                result = true;
+            } 
+        }
+        return result;
+    } 
     
     private boolean isEmpty() {
         return this.tblListItems.getModel().getRowCount()<=0;
@@ -40,9 +86,25 @@ public class Main extends javax.swing.JFrame {
     private void cartCheck() {
         if(isEmpty()) {
             this.btnSave.setEnabled(false);
+            this.btnRmv.setEnabled(false);
         } else {
             this.btnSave.setEnabled(true);
+            this.btnRmv.setEnabled(true);
         }
+    }
+    
+    private void newTrx() {
+        this.txtJml.setText("");
+        this.txtCode.setText("");
+        this.btnNew.setEnabled(true);
+        this.btnSave.setEnabled(false);
+        this.btnCncl.setEnabled(false);
+        this.btnAdd.setEnabled(false);
+        this.btnRmv.setEnabled(false);
+        this.txtJml.setEnabled(false);
+        this.comboItems.setEnabled(false);
+        this.tbModel.setRowCount(0);
+        this.cart.clear();
     }
 
     @SuppressWarnings("unchecked")
@@ -91,11 +153,16 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
-        tblListItems.setModel(this.cart);
+        tblListItems.setModel(this.tbModel);
         jScrollPane1.setViewportView(tblListItems);
 
         btnSave.setText("Save");
         btnSave.setEnabled(false);
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnCncl.setText("Cancel");
         btnCncl.setEnabled(false);
@@ -179,56 +246,65 @@ public class Main extends javax.swing.JFrame {
         this.btnAdd.setEnabled(true);
         this.txtJml.setEnabled(true);
         this.comboItems.setEnabled(true);
-        
-        incId();
-        Transact t = new Transact(this.id);
-        this.txtCode.setText(t.getCode());
-        try {
-            Trx.add(t);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        
+        this.txtCode.setText(this.setCode());
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnCnclActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCnclActionPerformed
-        this.txtJml.setText("");
-        this.txtCode.setText("");
-        this.btnNew.setEnabled(true);
-        this.btnSave.setEnabled(false);
-        this.btnCncl.setEnabled(false);
-        this.btnAdd.setEnabled(false);
-        this.btnRmv.setEnabled(false);
-        this.txtJml.setEnabled(false);
-        this.comboItems.setEnabled(false);
-        try {
-            decId();
-            this.Trx.remove(this.Trx.size() - 1);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        newTrx();
+        this.decId();
     }//GEN-LAST:event_btnCnclActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        try {
-            StringBuilder sb = new StringBuilder();
-            sb.append(this.Trx.size());
-            JOptionPane.showMessageDialog(this, sb);
-        } catch (Exception e) {
-        
+        String name = this.comboItems.getSelectedItem().toString();
+        int qty = new Integer(this.txtJml.getText());
+        Item item = new Item(name, qty);
+        if(isDuplicate(name)) {
+            int add = getQtyAt(name);
+            updateQty(name, add);
+        } else {
+            Object[] obj = {
+                item.getName(),
+                item.getPrice(),
+                item.getQty()
+            };
+            tbModel.addRow(obj);
         }
-        
         this.cartCheck();
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnRmvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRmvActionPerformed
-        
-        
+        if(tblListItems.getSelectedRow()<0) {
+            String str = "Pilih item yang ingin dihapus !";
+            JOptionPane.showMessageDialog(this, str, "Information", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            int count = tblListItems.getSelectedRows().length;
+            for(int i = 0; i < count; i++) {
+                tbModel.removeRow(tblListItems.getSelectedRow());
+            }
+        }
         this.cartCheck();
     }//GEN-LAST:event_btnRmvActionPerformed
 
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        try {
+            for (int i = 0; i < tbModel.getRowCount(); i++){
+                String name = tbModel.getValueAt(i, 0).toString();
+                int qty = new Integer(tbModel.getValueAt(i, 2).toString());
+                this.cart.add(new Item(name, qty));
+            }
+            Transact Trx = new Transact(this.code, this.cart);
+            StringBuilder str = new StringBuilder();
+            str.append(Trx.prtDetail());
+            JOptionPane.showMessageDialog(this, str, "Detil Transaksi", JOptionPane.INFORMATION_MESSAGE);
+            newTrx();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+    }//GEN-LAST:event_btnSaveActionPerformed
+
     /**
-     * @param args the command line arguments
+     * @param argv the command line arguments
      */
     public static void main(String argv[]) {
         /* Set the Nimbus look and feel */
