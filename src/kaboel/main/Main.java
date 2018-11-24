@@ -11,33 +11,37 @@ import javax.swing.table.DefaultTableModel;
 import kaboel.lib.*;
 
 public class Main extends javax.swing.JFrame {
-    private int id = 0;
-    private String code;
-    private DefaultTableModel tbModel;
-    private ArrayList<Item> cart = new ArrayList<>();
+    private int id = 0; // id variable for Transaction code iteration control
+    private String code; // code variable for Transaction code
+    private DefaultTableModel tbModel; // Jtable model 
+    private ArrayList<Item> cart = new ArrayList<>(); // cart variable to store each Transaction items
 
     public Main() {
-        TrxTableModel model = new TrxTableModel();
-        this.tbModel = new DefaultTableModel(model.getColumnName(), 0);
+        TrxTableModel model = new TrxTableModel(); 
+        this.tbModel = new DefaultTableModel(model.getColumnName(), 0); // Set Table Column names
         
         initComponents();
     }
     
+    // Set code function
     private String setCode() {
         this.incId();
-        String dt = new SimpleDateFormat("yyMMdd").format(new Date());
-        this.code = String.format(dt+"%02d", this.id);
+        String dt = new SimpleDateFormat("yyMMdd").format(new Date()); // get Current date as String;
+        this.code = String.format(dt+"%02d", this.id);  // then merge it with id with 0 pad
         return code;
     }
     
+    // id increment
     private void incId() {
         this.id += 1;
     }
     
+    // id decrement
     private void decId() {
         this.id -= 1;
     }
     
+    // update qty function 
     private void updateQty(String name, int qty) {
         int add = 1;
         ArrayList<String> item = new ArrayList<>();
@@ -51,6 +55,7 @@ public class Main extends javax.swing.JFrame {
         }
     } 
     
+    // get qty where item name equals to name parameter
     private int getQtyAt(String name) {
         int qty = 0;
         ArrayList<String> item = new ArrayList<>();
@@ -65,6 +70,7 @@ public class Main extends javax.swing.JFrame {
         return qty;
     }
     
+    // check if the item selected is a duplicate of a previously selected item
     private boolean isDuplicate(String name) {
         boolean result = false;
         ArrayList<String> item = new ArrayList<>();
@@ -79,10 +85,12 @@ public class Main extends javax.swing.JFrame {
         return result;
     } 
     
+    // check if the table is empty
     private boolean isEmpty() {
         return this.tblListItems.getModel().getRowCount()<=0;
     }
     
+    // disable Remove and Save button if the table is empty
     private void cartCheck() {
         if(isEmpty()) {
             this.btnSave.setEnabled(false);
@@ -93,6 +101,7 @@ public class Main extends javax.swing.JFrame {
         }
     }
     
+    // commit new Transaction after a succesful transaction is finished
     private void newTrx() {
         this.txtJml.setText("");
         this.txtCode.setText("");
@@ -255,17 +264,17 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCnclActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        String name = this.comboItems.getSelectedItem().toString();
-        int qty = new Integer(this.txtJml.getText());
-        Item item = new Item(name, qty);
-        if(isDuplicate(name)) {
-            int add = getQtyAt(name);
-            updateQty(name, add);
+        String name = this.comboItems.getSelectedItem().toString(); // get selected item on the comboItems then;
+        int qty = new Integer(this.txtJml.getText()); // get txtJml text as an Integer then;
+        Item item = new Item(name, qty); // instantiate Item class then; 
+        if(isDuplicate(name)) { // check if an item is a duplicate;
+            int add = getQtyAt(name); // if so, add only the qty cell with the new inputed qty
+            updateQty(name, add);     //
         } else {
-            Object[] obj = {
-                item.getName(),
-                item.getPrice(),
-                item.getQty()
+            Object[] obj = {        // if not add new item 
+                item.getName(),     //
+                item.getPrice(),    //
+                item.getQty()       //
             };
             tbModel.addRow(obj);
         }
@@ -273,11 +282,11 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnRmvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRmvActionPerformed
-        if(tblListItems.getSelectedRow()<0) {
-            String str = "Pilih item yang ingin dihapus !";
+        if(tblListItems.getSelectedRow()<0) { // check if theres a row selected;
+            String str = "Pilih item yang ingin dihapus !"; // if theres none, dialog will appear
             JOptionPane.showMessageDialog(this, str, "Information", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            int count = tblListItems.getSelectedRows().length;
+            int count = tblListItems.getSelectedRows().length; // if theres a row selected, a row will be removed
             for(int i = 0; i < count; i++) {
                 tbModel.removeRow(tblListItems.getSelectedRow());
             }
@@ -287,16 +296,16 @@ public class Main extends javax.swing.JFrame {
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         try {
-            for (int i = 0; i < tbModel.getRowCount(); i++){
-                String name = tbModel.getValueAt(i, 0).toString();
-                int qty = new Integer(tbModel.getValueAt(i, 2).toString());
-                this.cart.add(new Item(name, qty));
+            for (int i = 0; i < tbModel.getRowCount(); i++) {                   // loop each rows of the table then;
+                String name = tbModel.getValueAt(i, 0).toString();              // store the name and the qty into variables then;
+                int qty = new Integer(tbModel.getValueAt(i, 2).toString());     // add each result to cart global variable as an Item object 
+                this.cart.add(new Item(name, qty));                             //
             }
-            Transact Trx = new Transact(this.code, this.cart);
-            StringBuilder str = new StringBuilder();
-            str.append(Trx.prtDetail());
-            JOptionPane.showMessageDialog(this, str, "Detil Transaksi", JOptionPane.INFORMATION_MESSAGE);
-            newTrx();
+            Transact Trx = new Transact(this.code, this.cart); // instantiate Transact class with the current code and previously ommited cart
+            StringBuilder str = new StringBuilder(); // Stringbuilder to handle the transaction output
+            str.append(Trx.prtDetail()); // append transaction output
+            JOptionPane.showMessageDialog(this, str, "Detil Transaksi", JOptionPane.INFORMATION_MESSAGE); // call the dialog with the stringbuilder's string
+            newTrx(); // start a new transaction after;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
