@@ -5,28 +5,19 @@
 
 package kaboel.lib;
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Transact {
-    private int id = 0;
     private final String code;
-    private ArrayList<Item> items;
+    private ArrayList<Item> items = new ArrayList<>();
     private float total;
     
-    public Transact(int id) {
-        this.id += id;
-        this.code = setCode();
+    public Transact(String code, ArrayList<Item> items) {
+        this.code = code;
+        this.items = items;
     }
     
-    private String setCode() {
-        String dt = new SimpleDateFormat("yyMMdd").format(new Date());
-        String code = String.format(dt+"%02d", this.id);
-        return code;
-    }
-    
-    public float setTotal() {
+    public float getTotal() {
         float total = 0;
         for (Item item : this.items) {
             total += item.getPrice();
@@ -34,11 +25,14 @@ public class Transact {
         return total;
     }
     
-    public void setItems(ArrayList<Item> items) {
-        this.items = items;
-    }
-    
-    public String getCode() {
-        return code;
+    public String prtDetail() {
+        String str = "";
+        str += "Kode\t\t: "+ this.code +"\n";
+        str += "Daftar Belanja : \n";
+        for(Item item : this.items) {
+            str += "\t"+ item.getName() +"(x"+ item.getQty() +") : "+ item.getTotal() +"\n";
+        }
+        str += "Total\t\t: "+ this.getTotal();
+        return str;
     }
 }
