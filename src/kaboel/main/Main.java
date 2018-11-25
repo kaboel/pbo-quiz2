@@ -6,6 +6,7 @@ package kaboel.main;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import kaboel.lib.*;
@@ -13,12 +14,16 @@ import kaboel.lib.*;
 public class Main extends javax.swing.JFrame {
     private int id = 0; // id variable for Transaction code iteration control
     private String code; // code variable for Transaction code
+    private DefaultComboBoxModel cbModel; // Jcombobox model
     private DefaultTableModel tbModel; // Jtable model 
     private ArrayList<Item> cart = new ArrayList<>(); // cart variable to store each Transaction items
 
     public Main() {
-        TrxTableModel model = new TrxTableModel(); 
-        this.tbModel = new DefaultTableModel(model.getColumnName(), 0); // Set Table Column names
+        TrxComboModel comboModel = new TrxComboModel();
+        this.cbModel = new DefaultComboBoxModel<>(comboModel.getNames().toArray()); // Set Combo items
+        
+        TrxTableModel tableModel = new TrxTableModel(); 
+        this.tbModel = new DefaultTableModel(tableModel.getColumnName(), 0); // Set Table Column name
         
         initComponents();
     }
@@ -39,6 +44,23 @@ public class Main extends javax.swing.JFrame {
     // id decrement
     private void decId() {
         this.id -= 1;
+    }
+    
+    private Item addItem(String name, float price, int qty) {
+        Item item = new Item();
+        item.setName(name);
+        item.setPrice(price);
+        item.setQty(qty);
+        return item;
+    }
+    
+    private Object[] getItem(Item item) {
+        Object[] obj = {
+            item.getName(),
+            item.getPrice(),
+            item.getQty()
+        };
+        return obj;
     }
     
     // update qty function 
@@ -125,7 +147,7 @@ public class Main extends javax.swing.JFrame {
 
         txtCode.setEnabled(false);
 
-        comboItems.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Gula", "Kopi", "Susu" }));
+        comboItems.setModel(this.cbModel);
         comboItems.setEnabled(false);
 
         jLabel1.setText("Code");
@@ -251,16 +273,10 @@ public class Main extends javax.swing.JFrame {
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         String name = this.comboItems.getSelectedItem().toString(); // get selected item on the comboItems then;
         int qty = new Integer(this.txtJml.getText()); // get txtJml text as an Integer then;
-        Item item = new Item(name, qty); // instantiate Item class then; 
         if(isDuplicate(name)) { // check if an item is a duplicate;
             updateQty(name, qty); // if so, add only the qty cell with the new inputed qty
         } else {
-            Object[] obj = {        // if not add new item 
-                item.getName(),     //
-                item.getPrice(),    //
-                item.getQty()       //
-            };
-            tbModel.addRow(obj);
+            
         }
         this.cartCheck();
     }//GEN-LAST:event_btnAddActionPerformed
@@ -283,7 +299,7 @@ public class Main extends javax.swing.JFrame {
             for (int i = 0; i < tbModel.getRowCount(); i++) {                   // loop each rows of the table then;
                 String name = tbModel.getValueAt(i, 0).toString();              // store the name and the qty into variables then;
                 int qty = new Integer(tbModel.getValueAt(i, 2).toString());     // add each result to cart global variable as an Item object 
-                this.cart.add(new Item(name, qty));                             //
+//                this.cart.add(new Item(name, qty));                             //
             }
             Transact Trx = new Transact(this.code, this.cart); // instantiate Transact class with the current code and previously ommited cart
             StringBuilder str = new StringBuilder(); // Stringbuilder to handle the transaction output
