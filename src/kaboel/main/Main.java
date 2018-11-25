@@ -46,12 +46,20 @@ public class Main extends javax.swing.JFrame {
         this.id -= 1;
     }
     
-    private Item addItem(String name, float price, int qty) {
-        Item item = new Item();
-        item.setName(name);
-        item.setPrice(price);
-        item.setQty(qty);
-        return item;
+    private Object[] addItem(String name, int qty) {
+        float price = 0;
+        TrxComboModel items = new TrxComboModel();
+        for(int i = 0; i < items.getNames().size(); i++) {
+            if(name.equalsIgnoreCase(items.getNames().get(i))) {
+                price = items.getPrices().get(i);
+            }
+        } 
+        Object[] obj = {
+          name,
+          price,
+          qty
+        };
+        return obj;
     }
     
     private Object[] getItem(Item item) {
@@ -276,7 +284,7 @@ public class Main extends javax.swing.JFrame {
         if(isDuplicate(name)) { // check if an item is a duplicate;
             updateQty(name, qty); // if so, add only the qty cell with the new inputed qty
         } else {
-            
+            tbModel.addRow(addItem(name, qty));
         }
         this.cartCheck();
     }//GEN-LAST:event_btnAddActionPerformed
@@ -298,8 +306,9 @@ public class Main extends javax.swing.JFrame {
         try {
             for (int i = 0; i < tbModel.getRowCount(); i++) {                   // loop each rows of the table then;
                 String name = tbModel.getValueAt(i, 0).toString();              // store the name and the qty into variables then;
-                int qty = new Integer(tbModel.getValueAt(i, 2).toString());     // add each result to cart global variable as an Item object 
-//                this.cart.add(new Item(name, qty));                             //
+                float price = new Float(tbModel.getValueAt(i, 1).toString());   // add each result to cart global variable as an Item object 
+                int qty = new Integer(tbModel.getValueAt(i, 2).toString());     //
+                this.cart.add(new Item(name, price, qty));                      //
             }
             Transact Trx = new Transact(this.code, this.cart); // instantiate Transact class with the current code and previously ommited cart
             StringBuilder str = new StringBuilder(); // Stringbuilder to handle the transaction output
