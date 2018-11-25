@@ -62,15 +62,6 @@ public class Main extends javax.swing.JFrame {
         return obj;
     }
     
-    private Object[] getItem(Item item) {
-        Object[] obj = {
-            item.getName(),
-            item.getPrice(),
-            item.getQty()
-        };
-        return obj;
-    }
-    
     // update qty function 
     private void updateQty(String name, int add) {
         ArrayList<String> item = new ArrayList<>();
