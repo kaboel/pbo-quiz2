@@ -13,9 +13,10 @@ public class Item {
     
     // Constructor
     public Item() {}
-    public Item(String name, float price) {
+    public Item(String name, float price, int qty) {
         this.name = name;
         this.price = price;
+        this.qty = qty;
     }
     // price Setter
     public void setPrice(float price) {
