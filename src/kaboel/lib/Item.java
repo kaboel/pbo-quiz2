@@ -7,24 +7,19 @@ package kaboel.lib;
 
 
 public class Item {
-    private final String name; // name variable to store item name
+    private String name; // name variable to store item name
     private float price; // price variable to store item price
     private int qty; // qty variable to store item qty
     
     // Constructor
-    public Item(String name, int qty) {
+    public Item() {}
+    public Item(String name, float price) {
         this.name = name;
-        this.qty = qty;
-        switch(name) { // Set price for specific items
-            case "Kopi" : this.price = 10000; break;
-            case "Susu" : this.price = 20000; break;
-            case "Gula" : this.price = 30000; break;
-        }
+        this.price = price;
     }
-    
-    // name Getter
-    public String getName() {
-        return this.name;
+    // price Setter
+    public void setPrice(float price) {
+        this.price = price;
     }
     
     // price Getter
@@ -32,12 +27,17 @@ public class Item {
         return this.price;
     }
     
-    // returns result of item * qty
-    public float getTotal() {
-        return this.price * this.qty;
+    // name Setter
+    public void setName(String name) {
+        this.name = name;
     }
     
-    // qty setter
+    // name Getter
+    public String getName() {
+        return this.name;
+    }
+    
+     // qty setter
     public void setQty(int qty) {
         this.qty = qty;
     }
@@ -45,5 +45,14 @@ public class Item {
     // qty getter
     public int getQty() {
         return this.qty;
+    }
+    
+    // returns result of item * qty
+    public float getTotal() {
+        return this.price * this.qty;
+    }
+    
+    public String toString() {
+        return this.name;
     }
 }
