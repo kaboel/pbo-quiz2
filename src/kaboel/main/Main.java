@@ -7,6 +7,7 @@ package kaboel.main;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import kaboel.lib.*;
@@ -14,13 +15,16 @@ import kaboel.lib.*;
 public class Main extends javax.swing.JFrame {
     private int id = 0; // id variable for Transaction code iteration control
     private String code; // code variable for Transaction code
-    private DefaultComboBoxModel cbModel; // Jcombobox model
+    private TrxComboModel comboModel; // Jcombobox model handler
     private DefaultTableModel tbModel; // Jtable model 
     private ArrayList<Item> cart = new ArrayList<>(); // cart variable to store each Transaction items
 
     public Main() {
-        TrxComboModel comboModel = new TrxComboModel();
-        this.cbModel = new DefaultComboBoxModel<>(comboModel.getNames().toArray()); // Set Combo items
+        this.comboModel = new TrxComboModel(); // instantiate model handler
+        this.comboModel.addItem(new Item("Gula", new Float(30000)));    //  
+        this.comboModel.addItem(new Item("Kopi", new Float(10000)));    //  
+        this.comboModel.addItem(new Item("Susu", new Float(20000)));    //  
+        this.comboModel.addItem(new Item("Tepung", new Float(10000)));  //  
         
         TrxTableModel tableModel = new TrxTableModel(); 
         this.tbModel = new DefaultTableModel(tableModel.getColumnName(), 0); // Set Table Column name
@@ -48,10 +52,10 @@ public class Main extends javax.swing.JFrame {
     
     private Object[] addItem(String name, int qty) {
         float price = 0;
-        TrxComboModel items = new TrxComboModel();
-        for(int i = 0; i < items.getNames().size(); i++) {
-            if(name.equalsIgnoreCase(items.getNames().get(i))) {
-                price = items.getPrices().get(i);
+        Item[] items = this.comboModel.toArray();
+        for(int i = 0; i < items.length; i++) {
+            if(name.equalsIgnoreCase(items[i].getName())) {
+                price = items[i].getPrice();
             }
         } 
         Object[] obj = {
@@ -128,7 +132,7 @@ public class Main extends javax.swing.JFrame {
 
         txtJml = new javax.swing.JTextField();
         txtCode = new javax.swing.JTextField();
-        comboItems = new javax.swing.JComboBox<>();
+        comboItems = new JComboBox<Item>(this.comboModel.toArray());
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         btnNew = new javax.swing.JButton();
@@ -146,7 +150,6 @@ public class Main extends javax.swing.JFrame {
 
         txtCode.setEnabled(false);
 
-        comboItems.setModel(this.cbModel);
         comboItems.setEnabled(false);
 
         jLabel1.setText("Code");
@@ -275,7 +278,7 @@ public class Main extends javax.swing.JFrame {
         if(isDuplicate(name)) { // check if an item is a duplicate;
             updateQty(name, qty); // if so, add only the qty cell with the new inputed qty
         } else {
-            tbModel.addRow(addItem(name, qty));
+            tbModel.addRow(addItem(name, qty)); // add new row if theres no duplicate entry
         }
         this.cartCheck();
     }//GEN-LAST:event_btnAddActionPerformed
@@ -297,8 +300,8 @@ public class Main extends javax.swing.JFrame {
         try {
             for (int i = 0; i < tbModel.getRowCount(); i++) {                   // loop each rows of the table then;
                 String name = tbModel.getValueAt(i, 0).toString();              // store the name and the qty into variables then;
-                float price = new Float(tbModel.getValueAt(i, 1).toString());   // add each result to cart global variable as an Item object 
-                int qty = new Integer(tbModel.getValueAt(i, 2).toString());     //
+                float price = new Float(tbModel.getValueAt(i, 1).toString());   //
+                int qty = new Integer(tbModel.getValueAt(i, 2).toString());     //                
                 this.cart.add(new Item(name, price, qty));                      //
             }
             Transact Trx = new Transact(this.code, this.cart); // instantiate Transact class with the current code and previously ommited cart
@@ -353,7 +356,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnRmv;
     private javax.swing.JButton btnSave;
-    private javax.swing.JComboBox<String> comboItems;
+    private javax.swing.JComboBox<Item> comboItems;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
