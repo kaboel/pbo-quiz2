@@ -6,36 +6,26 @@
 package kaboel.lib;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 
 public class TrxComboModel {
-    private HashMap<String,Float> items = new HashMap<>();
+    private ArrayList<Item> items; // items variable to store item objects
     
+    // constructor
     public TrxComboModel() {
-        this.items.put("Gula", new Float(30000));
-        this.items.put("Kopi", new Float(10000));
-        this.items.put("Susu", new Float(20000));
-        this.items.put("Tepung", new Float(10000));
+        this.items = new ArrayList<>();
     }
     
-    public ArrayList<String> getNames() {
-        ArrayList<String> str = new ArrayList<>();
-        for(String item : this.items.keySet()) {
-            str.add(item);
+    // convert ArrayList<Item> to Item[] then return the result
+    public Item[] toArray() {
+        Item[] items = new Item[this.items.size()];
+        for(int i = 0; i < items.length; i++) {
+            items[i] = this.items.get(i);
         }
-        return str;
+        return items;
     }
     
-    public ArrayList<Float> getPrices() {
-        ArrayList<Float> flt = new ArrayList<>();
-        for(float item : this.items.values()) {
-            flt.add(item);
-        }
-        return flt;
-    }
-    
-    public void addItem(String name, float price) {
-        this.items.put(name, price);
+    // add item to Item list
+    public void addItem(Item item) {
+        this.items.add(item);
     }
 }
