@@ -21,10 +21,10 @@ public class Transact {
     // Total setter
     public void setTotal() {
         float total = 0;
-        for (Item item : this.items) {
-            total += item.getTotal();
+        for (Item item : this.items) { // Loop the global items ArrayList<>
+            total += item.getTotal();  // while incrementing the value of total with the result of each items price * qty of each items
         }
-        this.total = total;
+        this.total = total; // Set the global total to total
     }
     
     // Transaction Output
