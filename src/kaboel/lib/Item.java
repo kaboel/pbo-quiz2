@@ -7,8 +7,8 @@ package kaboel.lib;
 
 
 public class Item {
-    private String name; // name variable to store item name
-    private float price; // price variable to store item price
+    private final String name; // name variable to store item name
+    private final float price; // price variable to store item price
     private int qty; // qty variable to store item qty
     
     // Double parameter Constructor for Jcombobox population
@@ -24,29 +24,14 @@ public class Item {
         this.qty = qty;
     }
     
-    // price Setter
-    public void setPrice(float price) {
-        this.price = price;
-    }
-    
     // price Getter
     public float getPrice() {
         return this.price;
     }
     
-    // name Setter
-    public void setName(String name) {
-        this.name = name;
-    }
-    
     // name Getter
     public String getName() {
         return this.name;
-    }
-    
-     // qty setter
-    public void setQty(int qty) {
-        this.qty = qty;
     }
     
     // qty getter
@@ -59,7 +44,7 @@ public class Item {
         return this.price * this.qty;
     }
     
-    @Override
+    @Override // Override toString() method to handle the combobox object
     public String toString() {
         return this.name;
     }
