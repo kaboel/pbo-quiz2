@@ -10,12 +10,12 @@ import java.util.ArrayList;
 public class TrxComboModel {
     private ArrayList<Item> items; // items variable to store item objects
     
-    // constructor
+    // Constructor
     public TrxComboModel() {
         this.items = new ArrayList<>();
     }
     
-    // convert ArrayList<Item> to Item[] then return the result
+    // Convert ArrayList<Item> to Item[] then return the result
     public Item[] toArray() {
         Item[] items = new Item[this.items.size()];
         for(int i = 0; i < items.length; i++) {
@@ -24,8 +24,9 @@ public class TrxComboModel {
         return items;
     }
     
-    // add item to Item list
-    public void addItem(Item item) {
+    // Add item to items ArrayList<>
+    public void addItem(String name, float price) {
+        Item item = new Item(name, price);
         this.items.add(item);
     }
 }
