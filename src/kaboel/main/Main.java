@@ -6,7 +6,6 @@ package kaboel.main;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -21,13 +20,18 @@ public class Main extends javax.swing.JFrame {
 
     public Main() {
         this.comboModel = new TrxComboModel(); // instantiate model handler
-        this.comboModel.addItem(new Item("Gula", new Float(30000)));    //  
-        this.comboModel.addItem(new Item("Kopi", new Float(10000)));    //  
-        this.comboModel.addItem(new Item("Susu", new Float(20000)));    //  
-        this.comboModel.addItem(new Item("Tepung", new Float(10000)));  //  
+        this.comboModel.addItem("Gula", 30000);    //  
+        this.comboModel.addItem("Kopi", 10000);    //  Populate Combo Box items
+        this.comboModel.addItem("Susu", 20000);    //  
+        this.comboModel.addItem("Tepung", 10000);  //  
         
         TrxTableModel tableModel = new TrxTableModel(); 
-        this.tbModel = new DefaultTableModel(tableModel.getColumnName(), 0); // Set Table Column name
+        this.tbModel = new DefaultTableModel(tableModel.getColumnName(), 0) {  // Set Table Column name
+            @Override                                            // Override Method
+            public boolean isCellEditable(int row, int column) { // Set Table Cell isEditable 
+                return false;                                    // to False
+            };                                                   //
+        };
         
         initComponents();
     }
@@ -50,49 +54,50 @@ public class Main extends javax.swing.JFrame {
         this.id -= 1;
     }
     
+    // adds item to table list
     private Object[] addItem(String name, int qty) {
         float price = 0;
-        Item[] items = this.comboModel.toArray();
-        for(int i = 0; i < items.length; i++) {
-            if(name.equalsIgnoreCase(items[i].getName())) {
-                price = items[i].getPrice();
-            }
-        } 
-        Object[] obj = {
-          name,
-          price,
-          qty
+        Item[] items = this.comboModel.toArray();           // Convert the combobox modell to array
+        for(int i = 0; i < items.length; i++) {             // Loop the array
+            if(name.equalsIgnoreCase(items[i].getName())) { // while checking if the given String is equals to the looping array's name
+                price = items[i].getPrice();                // if so, set it as price variable value
+            }                                               //
+        }                                                  
+        Object[] obj = {    // Create an object array 
+          name,             // containing values that will be displayed
+          price,            // on a single row of the table
+          qty               //  
         };
-        return obj;
+        return obj; // Return the object array
     }
     
-    // update qty function 
+    // update qty value if an item has a duplicate entry
     private void updateQty(String name, int add) {
         ArrayList<String> item = new ArrayList<>();
-        for (int i = 0; i < tbModel.getRowCount(); i++){
-            item.add(tbModel.getValueAt(i, 0).toString());
-        }
-        for(int i = 0; i < item.size(); i++) {
-            if(item.get(i).equals(name)) {
-                int qty = new Integer(tbModel.getValueAt(i, 2).toString());
-                tbModel.setValueAt(qty+add, i, 2);  
-            } 
-        }
+        for (int i = 0; i < tbModel.getRowCount(); i++){    // Loop the table row to get the value on column index 0 which the an item item
+            item.add(tbModel.getValueAt(i, 0).toString());  // while moving them to the ArrayList<>
+        }                                                   //
+        for(int i = 0; i < item.size(); i++) {                              // Loop the item ArrayList<> 
+            if(item.get(i).equals(name)) {                                  // while checking if the "Name" value is equals to the given name
+                int qty = new Integer(tbModel.getValueAt(i, 2).toString()); // if so, get the qty value based on the index
+                tbModel.setValueAt(qty+add, i, 2);                          // then add the value of that index, which Qty value
+            }                                                               // with the given Int on the parameter
+        }                                                                   //
     } 
     
-    // check if the item selected is a duplicate of a previously selected item
+    // check if the item selected has a duplicate entry
     private boolean isDuplicate(String name) {
         boolean result = false;
         ArrayList<String> item = new ArrayList<>();
-        for (int i = 0; i < tbModel.getRowCount(); i++){
-            item.add(tbModel.getValueAt(i, 0).toString());
+        for (int i = 0; i < tbModel.getRowCount(); i++){    // Loop the table row to get the value on column index 0 which the an item item
+            item.add(tbModel.getValueAt(i, 0).toString());  // while moving them to the ArrayList<>
+        }                                                   //
+        for(String i : item) {    // Loop the item ArrayList
+            if(i.equals(name)) {  // while checking if the looping string is equals to the given String on the parameter
+                result = true;    // if so, set boolean result to True
+            }                     //
         }
-        for(String i : item) {
-            if(i.equals(name)) {
-                result = true;
-            } 
-        }
-        return result;
+        return result; // Return the result;
     } 
     
     // check if the table is empty
@@ -101,6 +106,7 @@ public class Main extends javax.swing.JFrame {
     }
     
     // disable Remove and Save button if the table is empty
+    // enable both if the table is not empty
     private void cartCheck() {
         if(isEmpty()) {
             this.btnSave.setEnabled(false);
@@ -288,11 +294,11 @@ public class Main extends javax.swing.JFrame {
             String str = "Pilih item yang ingin dihapus !"; // if theres none, dialog will appear
             JOptionPane.showMessageDialog(this, str, "Information", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            int count = tblListItems.getSelectedRows().length; // if theres a row selected, a row will be removed
-            for(int i = 0; i < count; i++) {
-                tbModel.removeRow(tblListItems.getSelectedRow());
-            }
-        }
+            int count = tblListItems.getSelectedRows().length;      // if theres a row selected
+            for(int i = 0; i < count; i++) {                        // 
+                tbModel.removeRow(tblListItems.getSelectedRow());   // the selected row will be removed
+            }                                                       //
+        }                                                           //
         this.cartCheck();
     }//GEN-LAST:event_btnRmvActionPerformed
 
