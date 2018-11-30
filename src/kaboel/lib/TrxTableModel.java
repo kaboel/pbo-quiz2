@@ -5,10 +5,9 @@
 
 package kaboel.lib;
 
-import javax.swing.table.*;
 
-public class TrxTableModel extends DefaultTableModel {
-    private String[] columns; // columns String array var to store column name
+public class TrxTableModel {
+    private final String[] columns; // columns String array var to store column name
     
     // Constructor
     public TrxTableModel() {
